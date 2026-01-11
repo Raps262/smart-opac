@@ -1,10 +1,8 @@
-import { motion } from "framer-motion";
-
 export const SearchSuggestions = ({ suggestions, onSelect }) => {
   if (!suggestions || suggestions.length === 0) return null;
 
   return (
-    <motion.ul
+    <div
       className="absolute left-0 top-full mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-lg z-[60] max-h-60 overflow-auto text-left
                  scrollbar-none"
       initial={{ opacity: 0, scale: 0.95 }}
@@ -33,6 +31,6 @@ export const SearchSuggestions = ({ suggestions, onSelect }) => {
           scrollbar-width: none;
         }
       `}</style>
-    </motion.ul>
+    </div>
   );
 };

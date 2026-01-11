@@ -1,11 +1,8 @@
-// Komentar: file service untuk semua request koleksi.
-// Catatan: axios config dan endpoints tidak disatukan ke file ini.
-
 import axiosInstance from "./api/axios.config";
 import { ENDPOINTS } from "./api/endpoints";
 
 class CollectionService {
-  // Komentar: mengambil koleksi populer
+  // mengambil koleksi populer
   async getPopular(limit = 5) {
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_POPULAR, {
       params: { limit },
@@ -13,7 +10,7 @@ class CollectionService {
     return res.data;
   }
 
-  // Komentar: mengambil koleksi terbaru
+  // mengambil koleksi terbaru
   async getLatest(limit = 5) {
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_LATEST, {
       params: { limit },
@@ -21,22 +18,26 @@ class CollectionService {
     return res.data;
   }
 
-  // Komentar: mengambil detail berdasarkan ID
+  // mengambil detail berdasarkan ID
   async getDetail(id) {
     const url = ENDPOINTS.COLLECTIONS_DETAILS(id);
     const res = await axiosInstance.get(url);
     return res.data;
   }
 
-  // Komentar: pencarian koleksi
+  // PERBAIKAN: Tambahkan debug log untuk pencarian koleksi
   async search(params = {}) {
+    console.log("CollectionService.search called with params:", params);
+
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_SEARCH, {
-      params,
+      params, // Kirim params langsung tanpa modifikasi
     });
+
+    console.log("CollectionService.search response:", res.data);
     return res.data;
   }
 
-  // Komentar: mengambil suggestion autocomplete
+  // mengambil suggestion autocomplete
   async getSuggestions(query, type = "all") {
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_SUGGEST, {
       params: { q: query, search_type: type },
@@ -44,7 +45,7 @@ class CollectionService {
     return res.data?.suggestions || [];
   }
 
-  // Komentar: mengambil data filter
+  // mengambil data filter
   async getFilterOptions() {
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_FILTERS);
     return {
@@ -55,7 +56,7 @@ class CollectionService {
     };
   }
 
-  // Komentar: konversi text menjadi vector menggunakan model backend
+  // konversi text menjadi vector menggunakan model backend
   async vectorize(texts = []) {
     if (!texts.length) return [];
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_VECTORIZE, {
@@ -64,7 +65,7 @@ class CollectionService {
     return res.data?.vectors || [];
   }
 
-  // Komentar: mengambil rekomendasi menggunakan semantic search
+  // mengambil rekomendasi menggunakan semantic search
   async getRecommendations({
     query,
     top_k = 10,
@@ -72,7 +73,6 @@ class CollectionService {
     year = null,
   }) {
     if (!query?.trim()) return [];
-
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_RECOMMEND, {
       params: {
         query,
@@ -81,7 +81,6 @@ class CollectionService {
         ...(year && { year }),
       },
     });
-
     return res.data || [];
   }
 }

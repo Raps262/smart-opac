@@ -1,4 +1,5 @@
-// import { motion } from "framer-motion";
+// components/search/SearchFilters.jsx
+// import { motion } from "framer-motion";  // Uncomment jika Anda ingin menggunakan motion secara eksplisit
 import { X } from "lucide-react";
 import { SearchHistory } from "./SearchHistory";
 import { BASIC_FILTERS } from "../../../constants/searchFilters";
@@ -10,6 +11,7 @@ export const SearchFilters = ({
   onClose,
   history,
   onSelectHistory,
+  onClearHistory,
 }) => {
   return (
     <div
@@ -63,7 +65,11 @@ export const SearchFilters = ({
 
       {/* Search History */}
       <div className="text-left">
-        <SearchHistory history={history} onSelect={onSelectHistory} />
+        <SearchHistory 
+          history={history} 
+          onSelect={onSelectHistory} 
+          onClear={onClearHistory} 
+        />
       </div>
     </div>
   );

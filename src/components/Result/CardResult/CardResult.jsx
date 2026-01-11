@@ -1,20 +1,17 @@
 import { useCardExpansion } from "../../../hooks/ui/useCardExpacnsion";
 import { CardActions } from "../Actions/CardActions";
-
-import { Book, Building2, Tag, Hash } from "lucide-react";
+import { Book, Building2, Tag, Hash, Target } from "lucide-react";
 
 export default function CardResult({
   book,
   cardMaxHeight = 220,
   onOpenCitation,
 }) {
-
-  // Komentar: Mengambil status ekspansi, ref, dan pengecekan overflow dari hook
   const { expanded, descRef, overflowing, toggleExpand } = useCardExpansion(
     book.description
   );
 
-  // Komentar: Format data
+  // Format data
   const authors = book.author_rell?.map((a) => a.author.author_name).join(", ");
   const additionalAuthors = book.author_rell
     ?.map((a) => a.author.additional_author)
@@ -30,6 +27,10 @@ export default function CardResult({
 
   const subjects = book.subject?.map((s) => s.subject_name).join(", ") || "-";
 
+  // Ambil relevance score (jika ada)
+  const relevanceScore = book.relevance_score || 0;
+  const hasScore = relevanceScore > 0;
+
   return (
     <div
       className="max-w-5xl w-full mx-auto p-4 bg-white rounded-xl shadow-[1px_1px_4px_rgba(1,1,1,0.1),2px_2px_8px_rgba(0,0,0,0.15)] grid grid-cols-[1fr_120px] gap-4 relative transition-all duration-300 border border-slate-200"
@@ -37,13 +38,21 @@ export default function CardResult({
     >
       {/* Kiri: Cover + Konten */}
       <div className="flex gap-6 relative">
-        {/* Komentar: Cover tetap ukuran original, tidak diubah */}
+        {/* Cover */}
         <div className="relative">
           <img
             src={book.cover_link}
             alt={book.title}
             className="w-28 h-40 object-cover rounded-lg border border-slate-200 shadow-md"
           />
+          
+          {/* Badge Relevance Score (jika > 0) */}
+          {hasScore && (
+            <div className="absolute -top-2 -right-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg flex items-center gap-1">
+              <Target className="w-3 h-3" />
+              {(relevanceScore * 100).toFixed(0)}%
+            </div>
+          )}
         </div>
 
         {/* Konten */}
@@ -52,9 +61,7 @@ export default function CardResult({
           style={{ minHeight: `${cardMaxHeight}px` }}
         >
           {/* Judul */}
-          <h3
-            className="font-bold text-lg text-slate-900 mb-2"
-          >
+          <h3 className="font-bold text-lg text-slate-900 mb-2">
             {book.title}
           </h3>
 
@@ -67,7 +74,7 @@ export default function CardResult({
             </span>
           </div>
 
-          {/* Komentar: Deskripsi memakai ref untuk mendeteksi overflow */}
+          {/* Deskripsi */}
           <div
             ref={descRef}
             className="text-sm text-slate-600 leading-relaxed transition-all duration-500 ease-in-out overflow-hidden text-justify"
@@ -76,7 +83,7 @@ export default function CardResult({
             {book.description || "-"}
           </div>
 
-          {/* Info tambahan */}
+          {/* Info tambahan (expanded) */}
           <div
             className={`mt-4 transition-all duration-500 ease-in-out ${
               expanded ? "opacity-100" : "opacity-0 h-0"
@@ -131,17 +138,34 @@ export default function CardResult({
                     </p>
                   </div>
                 </div>
+
+                {/* Relevance Score (expanded) */}
+                {hasScore && (
+                  <div className="flex items-start gap-3 pt-2 border-t border-slate-200">
+                    <Target className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <span className="text-xs font-semibold text-slate-500">
+                        Tingkat Relevansi
+                      </span>
+                      <p className="text-sm text-indigo-700 font-bold">
+                        {(relevanceScore * 100).toFixed(1)}%
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">
+                        Semakin tinggi skor, semakin relevan dengan pencarian Anda
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
 
-          {/* Komentar: Arrow expand (mengganti tombol Selengkapnya / Lebih Sedikit) */}
+          {/* Arrow expand */}
           {overflowing && (
             <button
               className="absolute left-1/2 -translate-x-1/2 -bottom-5 px-3 py-1 rounded-full text-sm bg-gray-100 shadow flex items-center justify-center hover:bg-gray-200 transition-colors"
               onClick={toggleExpand}
             >
-              {/* Komentar: Arrow vertikal yang berputar 180° saat expanded */}
               <span
                 style={{
                   writingMode: "vertical-rl",

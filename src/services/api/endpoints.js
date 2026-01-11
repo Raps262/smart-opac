@@ -1,14 +1,22 @@
+import { API_CONFIG, API_ENDPOINTS } from "../../constants/config";
+
 export const ENDPOINTS = {
   // Collections
-  COLLECTIONS_POPULAR: "/api/v1/collections/popular",       // Ambil koleksi populer
-  COLLECTIONS_LATEST: "/api/v1/collections/latest",       // Ambil koleksi terbaru
-  COLLECTIONS_DETAILS: (id) => `/api/v1/collections/details/${id}`, // DETAIL KOLEKSI (sesuai backend)
-  COLLECTIONS_SEARCH: "/api/v1/collections/search",       // Pencarian koleksi
-  COLLECTIONS_SUGGEST: "/api/v1/collections/suggest",     // Suggestion/autocomplete
-  COLLECTIONS_FILTERS: "/api/v1/collections/filters",     // Filter opsi untuk koleksi
-  COLLECTIONS_VECTORIZE: "/api/v1/collections/vectorize", // Endpoint untuk vectorize koleksi
-  COLLECTIONS_RECOMMEND: "/api/v1/collections/recommend", // Rekomendasi berdasarkan koleksi (sesuai backend)
+  COLLECTIONS_POPULAR: API_ENDPOINTS.COLLECTIONS.POPULAR,
+  COLLECTIONS_LATEST: API_ENDPOINTS.COLLECTIONS.LATEST,
+  COLLECTIONS_DETAILS: (id) => API_ENDPOINTS.COLLECTIONS.DETAILS(id),
+  COLLECTIONS_SEARCH: API_ENDPOINTS.COLLECTIONS.SEARCH,
+  COLLECTIONS_SUGGEST: API_ENDPOINTS.COLLECTIONS.SUGGEST,
+  COLLECTIONS_FILTERS: API_ENDPOINTS.COLLECTIONS.FILTERS,
+  COLLECTIONS_VECTORIZE: API_ENDPOINTS.COLLECTIONS.VECTORIZE,
+  COLLECTIONS_RECOMMEND: API_ENDPOINTS.COLLECTIONS.RECOMMEND,
 
   // Vector
-  VECTOR_VECTORIZE: "/api/v1/vectorize",                  // Vectorize umum (misal query text)
+  VECTOR_VECTORIZE: API_ENDPOINTS.VECTOR.VECTORIZE,
+
+  // Absolute helpers
+  ABSOLUTE: {
+    BASE_URL: API_CONFIG.BASE_URL,
+    COLLECTION_DETAILS_URL: (id) => `${API_CONFIG.BASE_URL}${API_ENDPOINTS.COLLECTIONS.DETAILS(id)}`,
+  },
 };

@@ -1,6 +1,3 @@
-// src/hooks/storage/useVectorStore.js
-// Hook untuk menyimpan, mengambil, dan menghapus vector embeddings
-
 import { useCallback } from "react";
 import { storage } from "../../utils/storage/localStorage";
 import { STORAGE_KEYS } from "../../constants/config";
