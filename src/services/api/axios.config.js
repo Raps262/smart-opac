@@ -1,9 +1,13 @@
 import axios from "axios";
 import { API_CONFIG } from "../../constants/config";
 
+// Gabungkan BASE_URL + API_PREFIX secara eksplisit
+// Contoh hasil: http://203.194.114.217/api
+const BASE_API_URL = `${API_CONFIG.BASE_URL}${API_CONFIG.API_PREFIX}`;
+
 // Create axios instance
 const apiClient = axios.create({
-  baseURL: API_CONFIG.BASE_URL,
+  baseURL: BASE_API_URL,
   timeout: API_CONFIG.TIMEOUT,
   headers: {
     "Content-Type": "application/json",
@@ -21,7 +25,11 @@ apiClient.interceptors.request.use(
 
     // Log request in development
     if (import.meta.env.DEV) {
-      console.log("API Request:", config.method?.toUpperCase(), config.url);
+      console.log(
+        "API Request:",
+        config.method?.toUpperCase(),
+        `${BASE_API_URL}${config.url}`
+      );
     }
 
     return config;
@@ -35,27 +43,20 @@ apiClient.interceptors.request.use(
 // Response interceptor
 apiClient.interceptors.response.use(
   (response) => {
-    // Log response in development
     if (import.meta.env.DEV) {
       console.log("API Response:", response.status, response.config.url);
     }
-
     return response;
   },
   (error) => {
-    // Handle errors globally
     const { response, request } = error;
 
     if (response) {
-      // Server responded with error
       console.error("API Error:", response.status, response.data);
 
-      // Handle specific status codes
       switch (response.status) {
         case 401:
-          // Unauthorized - redirect to login
           console.warn("Unauthorized - Token expired or invalid");
-          // window.location.href = "/login";
           break;
         case 403:
           console.warn("Forbidden - Access denied");
@@ -70,10 +71,8 @@ apiClient.interceptors.response.use(
           console.error("Error:", response.status);
       }
     } else if (request) {
-      // Request made but no response
       console.error("Network Error - No response from server");
     } else {
-      // Something else happened
       console.error("Error:", error.message);
     }
 
