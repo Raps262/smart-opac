@@ -1,24 +1,24 @@
-const BASE_URL = import.meta.env.VITE_API_URL?.replace(/\/$/, "") || "";
-const API_PREFIX = (import.meta.env.VITE_API_PREFIX || "/api").replace(/\/$/, "");
+const rawBase = import.meta.env.VITE_API_BASE_URL ?? "";
+const API_PREFIX = (import.meta.env.VITE_API_PREFIX ?? "/api").replace(/\/$/, "");
 
 export const API_CONFIG = {
-  BASE_URL,
+  BASE_URL: rawBase.replace(/\/$/, ""),
   API_PREFIX,
+  TIMEOUT: 10000,
+  RETRY_ATTEMPTS: 2,
 };
+
+const prefixPath = (path) => `${API_CONFIG.API_PREFIX}${path}`;
 
 export const API_ENDPOINTS = {
   COLLECTIONS: {
-    POPULAR: `${API_PREFIX}/collections/popular`,
-    LATEST: `${API_PREFIX}/collections/latest`,
-    DETAILS: (id) => `${API_PREFIX}/collections/details/${id}`,
-    SEARCH: `${API_PREFIX}/collections/search`,
-    FILTERS: `${API_PREFIX}/collections/filters`,
-    SUGGEST: `${API_PREFIX}/collections/suggest`,
-    RECOMMEND: `${API_PREFIX}/collections/recommend`,
-  },
-
-  // ✅ INI YANG HILANG & MENYEBABKAN ERROR
-  VECTOR: {
-    VECTORIZE: `${API_PREFIX}/vectorize`,
+    POPULAR: prefixPath(`/collections/popular`),
+    LATEST: prefixPath(`/collections/latest`),
+    DETAILS: (id) => prefixPath(`/collections/details/${id}`),
+    SEARCH: prefixPath(`/collections/search`),
+    SUGGEST: prefixPath(`/collections/suggest`),
+    FILTERS: prefixPath(`/collections/filters`),
+    RECOMMEND: prefixPath(`/collections/recommend`),
+    VECTORIZE: prefixPath(`/collections/vectorize`),
   },
 };
