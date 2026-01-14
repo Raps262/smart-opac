@@ -142,17 +142,7 @@ export default function CardResult({
                 {/* Relevance Score (expanded) */}
                 {hasScore && (
                   <div className="flex items-start gap-3 pt-2 border-t border-slate-200">
-                    <Target className="w-4 h-4 text-indigo-600 mt-0.5 flex-shrink-0" />
                     <div>
-                      <span className="text-xs font-semibold text-slate-500">
-                        Tingkat Relevansi
-                      </span>
-                      <p className="text-sm text-indigo-700 font-bold">
-                        {(relevanceScore * 100).toFixed(1)}%
-                      </p>
-                      <p className="text-xs text-slate-500 mt-1">
-                        Semakin tinggi skor, semakin relevan dengan pencarian Anda
-                      </p>
                     </div>
                   </div>
                 )}
