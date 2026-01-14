@@ -1,27 +1,25 @@
+// src/services/vector.service.js
+
 import apiClient from "./api/axios.config";
 import { ENDPOINTS } from "./api/endpoints";
 
 class VectorService {
-  // vectorize satu teks
+  /**
+   * Komentar: vectorize satu teks, hentikan bila teks kosong
+   */
   async vectorizeText(text) {
-    // komentar: validasi input
     if (!text || text.trim() === "") {
-      return [];
-    }
-
-    // komentar: jika endpoint vectorize belum tersedia
-    if (!ENDPOINTS.VECTOR_VECTORIZE) {
-      console.warn("VECTOR_VECTORIZE endpoint tidak tersedia");
+      console.warn("Empty text provided for vectorization");
       return [];
     }
 
     try {
-      const response = await apiClient.post(
-        ENDPOINTS.VECTOR_VECTORIZE,
-        { texts: [text] }
-      );
+      // Komentar: gunakan endpoint vectorize backend yang benar
+      const response = await apiClient.post(ENDPOINTS.VECTOR_VECTORIZE, {
+        texts: [text],
+      });
 
-      // komentar: ambil vector pertama
+      // Komentar: ambil vector pertama dari hasil backend
       return response.data?.vectors?.[0] || [];
     } catch (error) {
       console.error("Error vectorizing text:", error);
@@ -29,25 +27,22 @@ class VectorService {
     }
   }
 
-  // vectorize banyak teks
+  /**
+   * Komentar: vectorize banyak teks sekaligus
+   */
   async vectorizeTexts(texts = []) {
-    // komentar: validasi input
-    if (!Array.isArray(texts) || texts.length === 0) {
-      return [];
-    }
-
-    // komentar: jika endpoint vectorize belum tersedia
-    if (!ENDPOINTS.VECTOR_VECTORIZE) {
-      console.warn("VECTOR_VECTORIZE endpoint tidak tersedia");
+    if (!texts || texts.length === 0) {
+      console.warn("Empty texts array provided for vectorization");
       return [];
     }
 
     try {
-      const response = await apiClient.post(
-        ENDPOINTS.VECTOR_VECTORIZE,
-        { texts }
-      );
+      // Komentar: gunakan endpoint vectorize backend yang benar
+      const response = await apiClient.post(ENDPOINTS.VECTOR_VECTORIZE, {
+        texts,
+      });
 
+      // Komentar: kembalikan semua vector hasil SBERT
       return response.data?.vectors || [];
     } catch (error) {
       console.error("Error vectorizing texts:", error);
@@ -55,31 +50,34 @@ class VectorService {
     }
   }
 
-  // menghitung cosine similarity
+  /**
+   * Komentar: hitung cosine similarity dua vector
+   */
   calculateSimilarity(vector1, vector2) {
-    // komentar: validasi vector
-    if (
-      !Array.isArray(vector1) ||
-      !Array.isArray(vector2) ||
-      vector1.length !== vector2.length
-    ) {
+    if (!vector1 || !vector2 || vector1.length !== vector2.length) {
+      console.warn("Invalid vectors for similarity calculation");
       return 0;
     }
 
-    let dotProduct = 0;
-    let norm1 = 0;
-    let norm2 = 0;
+    try {
+      let dotProduct = 0;
+      let norm1 = 0;
+      let norm2 = 0;
 
-    for (let i = 0; i < vector1.length; i++) {
-      dotProduct += vector1[i] * vector2[i];
-      norm1 += vector1[i] * vector1[i];
-      norm2 += vector2[i] * vector2[i];
+      for (let i = 0; i < vector1.length; i++) {
+        dotProduct += vector1[i] * vector2[i];
+        norm1 += vector1[i] * vector1[i];
+        norm2 += vector2[i] * vector2[i];
+      }
+
+      // Komentar: rumus cosine similarity
+      return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
+    } catch (error) {
+      console.error("Error calculating similarity:", error);
+      return 0;
     }
-
-    // komentar: rumus cosine similarity
-    return dotProduct / (Math.sqrt(norm1) * Math.sqrt(norm2));
   }
 }
 
-// komentar: export singleton
+// Komentar: export instance
 export default new VectorService();
