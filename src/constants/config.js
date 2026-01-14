@@ -16,4 +16,9 @@ export const API_ENDPOINTS = {
     SUGGEST: `${API_PREFIX}/collections/suggest`,
     RECOMMEND: `${API_PREFIX}/collections/recommend`,
   },
+
+  // ✅ INI YANG HILANG & MENYEBABKAN ERROR
+  VECTOR: {
+    VECTORIZE: `${API_PREFIX}/vectorize`,
+  },
 };

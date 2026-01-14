@@ -4,17 +4,19 @@ import { ENDPOINTS } from "./api/endpoints";
 class CollectionService {
   // mengambil koleksi populer
   async getPopular(limit = 5) {
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_POPULAR, {
-      params: { limit },
-    });
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_POPULAR,
+      { params: { limit } }
+    );
     return res.data;
   }
 
   // mengambil koleksi terbaru
   async getLatest(limit = 5) {
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_LATEST, {
-      params: { limit },
-    });
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_LATEST,
+      { params: { limit } }
+    );
     return res.data;
   }
 
@@ -27,27 +29,35 @@ class CollectionService {
 
   // melakukan pencarian koleksi
   async search(params = {}) {
-    // Debug untuk memastikan parameter terkirim dengan benar
+    // komentar: pastikan params dikirim apa adanya
     console.log("CollectionService.search params:", params);
 
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_SEARCH, {
-      params,
-    });
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_SEARCH,
+      { params }
+    );
 
     return res.data;
   }
 
   // mengambil suggestion autocomplete
   async getSuggestions(query, type = "all") {
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_SUGGEST, {
-      params: { q: query, search_type: type },
-    });
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_SUGGEST,
+      {
+        params: { q: query, search_type: type },
+      }
+    );
+
     return res.data?.suggestions || [];
   }
 
-  // mengambil data filter (subject, publisher, document, year)
+  // mengambil data filter
   async getFilterOptions() {
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_FILTERS);
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_FILTERS
+    );
+
     return {
       subject_name: res.data.subject_name || [],
       publisher_name: res.data.publisher_name || [],
@@ -56,21 +66,22 @@ class CollectionService {
     };
   }
 
-  // konversi teks menjadi vektor embedding (DIGANTI: GET → POST)
+  // konversi teks menjadi vector embedding
   async vectorize(texts = []) {
-    // Jika tidak ada teks, tidak perlu request ke backend
-    if (!Array.isArray(texts) || texts.length === 0) return [];
+    // komentar: jika endpoint vectorize tidak tersedia, jangan crash
+    if (!ENDPOINTS.VECTOR_VECTORIZE) {
+      console.warn("VECTOR_VECTORIZE endpoint tidak tersedia");
+      return [];
+    }
 
-    /*
-      Endpoint vectorize berada di:
-      POST /api/vectorize
+    // komentar: validasi input
+    if (!Array.isArray(texts) || texts.length === 0) {
+      return [];
+    }
 
-      Dipisahkan dari collections karena ini proses ML,
-      bukan operasi CRUD koleksi.
-    */
     const res = await axiosInstance.post(
       ENDPOINTS.VECTOR_VECTORIZE,
-      { texts } // payload dikirim dalam body, bukan query param
+      { texts }
     );
 
     return res.data?.vectors || [];
@@ -83,8 +94,10 @@ class CollectionService {
     category = null,
     year = null,
   }) {
-    // Validasi query agar tidak request kosong
-    if (!query?.trim()) return [];
+    // komentar: cegah request kosong
+    if (!query || !query.trim()) {
+      return [];
+    }
 
     const res = await axiosInstance.get(
       ENDPOINTS.COLLECTIONS_RECOMMEND,
@@ -102,4 +115,5 @@ class CollectionService {
   }
 }
 
+// komentar: export singleton
 export default new CollectionService();
