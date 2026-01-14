@@ -1,4 +1,4 @@
-const rawBase = import.meta.env.VITE_API_URL ?? "";
+const rawBase = import.meta.env.VITE_BASE_API_URL ?? "";
 const API_PREFIX = (import.meta.env.VITE_API_PREFIX ?? "/api").replace(/\/$/, "");
 
 export const API_CONFIG = {
