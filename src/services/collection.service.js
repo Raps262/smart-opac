@@ -18,22 +18,22 @@ class CollectionService {
     return res.data;
   }
 
-  // mengambil detail berdasarkan ID
+  // mengambil detail koleksi berdasarkan ID
   async getDetail(id) {
     const url = ENDPOINTS.COLLECTIONS_DETAILS(id);
     const res = await axiosInstance.get(url);
     return res.data;
   }
 
-  // PERBAIKAN: Tambahkan debug log untuk pencarian koleksi
+  // melakukan pencarian koleksi
   async search(params = {}) {
-    console.log("CollectionService.search called with params:", params);
+    // Debug untuk memastikan parameter terkirim dengan benar
+    console.log("CollectionService.search params:", params);
 
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_SEARCH, {
-      params, // Kirim params langsung tanpa modifikasi
+      params,
     });
 
-    console.log("CollectionService.search response:", res.data);
     return res.data;
   }
 
@@ -45,7 +45,7 @@ class CollectionService {
     return res.data?.suggestions || [];
   }
 
-  // mengambil data filter
+  // mengambil data filter (subject, publisher, document, year)
   async getFilterOptions() {
     const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_FILTERS);
     return {
@@ -56,31 +56,48 @@ class CollectionService {
     };
   }
 
-  // konversi text menjadi vector menggunakan model backend
+  // konversi teks menjadi vektor embedding (DIGANTI: GET → POST)
   async vectorize(texts = []) {
-    if (!texts.length) return [];
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_VECTORIZE, {
-      params: { texts: JSON.stringify(texts) },
-    });
+    // Jika tidak ada teks, tidak perlu request ke backend
+    if (!Array.isArray(texts) || texts.length === 0) return [];
+
+    /*
+      Endpoint vectorize berada di:
+      POST /api/vectorize
+
+      Dipisahkan dari collections karena ini proses ML,
+      bukan operasi CRUD koleksi.
+    */
+    const res = await axiosInstance.post(
+      ENDPOINTS.VECTOR_VECTORIZE,
+      { texts } // payload dikirim dalam body, bukan query param
+    );
+
     return res.data?.vectors || [];
   }
 
-  // mengambil rekomendasi menggunakan semantic search
+  // mengambil rekomendasi berbasis semantic search
   async getRecommendations({
     query,
     top_k = 10,
     category = null,
     year = null,
   }) {
+    // Validasi query agar tidak request kosong
     if (!query?.trim()) return [];
-    const res = await axiosInstance.get(ENDPOINTS.COLLECTIONS_RECOMMEND, {
-      params: {
-        query,
-        top_k,
-        ...(category && { category }),
-        ...(year && { year }),
-      },
-    });
+
+    const res = await axiosInstance.get(
+      ENDPOINTS.COLLECTIONS_RECOMMEND,
+      {
+        params: {
+          query,
+          top_k,
+          ...(category && { category }),
+          ...(year && { year }),
+        },
+      }
+    );
+
     return res.data || [];
   }
 }
